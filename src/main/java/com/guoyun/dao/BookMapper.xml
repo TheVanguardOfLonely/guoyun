@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.guoyun.dao.BookDao">
+    <resultMap id="bookMap" type="Book">
+        <id property="id" column="ID"/>
+        <result property="author" column="AUTHOR"/>
+        <result property="name" column="NAME"/>
+        <result property="publishDate" column="PUBLISH_DATE"/>
+    </resultMap>
+
+    <select id="getBookList" parameterType="Book" resultMap="bookMap">
+        select B.ID,B.AUTHOR,B.NAME,B.PUBLISH_DATE
+        from BOOK B
+        <where>
+            <if test="id!=null">and B.ID=#{id}</if>
+            <if test="name!=null and name!=''">and B.NAME like concat('%',#{name},'%')</if>
+        </where>
+    </select>
+
+    <select id="getBookById" parameterType="int" resultMap="bookMap">
+        select ID,
+               AUTHOR,
+               NAME,
+               PUBLISH_DATE,
+        from BOOK
+        where id = #{id}
+    </select>
+
+    <update id="updateBook" parameterType="Book">
+        update BOOK
+        <set>
+            <if test="name!=null and name != ''">NAME=#{name},</if>
+            <if test="author!=null and author!=''">AUTHOR=#{author},</if>
+            <if test="publishDate!=null">PUBLISH_DATE=#{publishDate},</if>
+        </set>
+        where ID=#{id}
+    </update>
+
+    <insert id="addBook" parameterType="Book" keyProperty="id" useGeneratedKeys="true">
+        insert into BOOK(NAME, AUTHOR, PUBLISH_DATE)
+            values(#{name},#{author},#{publishDate})
+    </insert>
+
+    <delete id="deleteBook" parameterType="int">
+        delete from BOOK where id=#{id}
+    </delete>
+
+    <!--<select id="findAll" resultType="com.easyui.pojo.Employee">
+        select * from net_t_emp
+    </select>
+
+    &lt;!&ndash; 返回Map类型的结果  map是java.util.Map的简写形式&ndash;&gt;
+    <select id="findById2" parameterType="int" resultType="map">
+        select * from net_t_emp where id=#{id1}
+    </select>
+
+    &lt;!&ndash; 使用resultMap解决表的字段名与实体类的属性名不一致的情况 &ndash;&gt;
+    <resultMap type="com.easyui.pojo.Emp" id="empRestultMap">
+        <result property="empNo" column="id"/>
+        <result property="ename" column="name"/>
+    </resultMap>
+
+    <select id="findById3" parameterType="int" resultMap="empRestultMap">
+        select * from net_t_emp where id=#{id1}
+    </select>-->
+</mapper>
